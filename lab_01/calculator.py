@@ -2,6 +2,7 @@ ADD = "add"
 SUB = "sub"
 MULT = "mult"
 DIV = "div"
+
 def calc(first_num, second_num, operation):
     if (operation == ADD):
         return first_num + second_num
