@@ -1,5 +1,5 @@
 import re
-from help_functions import lowercase_search, name_search, quotes_search, get_text, count_nondec, check_numbers
+from help_functions import lowercase_search, name_search, quotes_search, get_text, count_nondec, check_numbers, max_search
 
 EXCEPTIONS = ['Mr\.', 'Mrs\.', 'Dr\.', 'ca?\.', 'et al\.', 'Lt\.', 'Rep\.', 'B\.A\.',
               'Ph\.D\.', 'M\.D\.', 'Jan\.', 'Feb\.', 'Mar\.', 'Apr\.', 'Jun\.', 'Jul\.', 'Aug\.', 'Sept\.', 'Oct\.',
@@ -48,12 +48,35 @@ def average_length(text: str, amount_of_sentences):
 
     average_word = length / amount_of_words
     print(f"Average length of the sentence: {average_word}")
+    return words
+
+
+def ngrams(text: str, words):
+    # n = input("Enter n: ")
+    # k = input("Enter k: ")
+    n = 4
+    k = 10
+    ngrams_dict = {}
+    ngram = ""
+
+    for i in range(0, len(words) - n):
+        for j in range(i, i + n):
+            ngram += words[j] + ' '
+        try:
+            val = ngrams_dict[ngram]
+            ngrams_dict[ngram] = val + 1
+        except:
+            ngrams_dict.__setitem__(ngram, 1)
+        ngram = ""
+
+    max_search(ngrams_dict, k)
 
 
 def main():
     text = get_text()
     amount_of_sentences = sentences(text)
-    average_length(text, amount_of_sentences)
+    words = average_length(text, amount_of_sentences)
+    ngrams(text, words)
 
 
 if __name__ == '__main__':

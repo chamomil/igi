@@ -53,3 +53,17 @@ def check_numbers(sentence_list):
         if sentence.isdigit():
             sentence_list.remove(sentence)
     return sentence_list
+
+
+def max_search(ngrams: dict, k: int):
+    _k = k + 1
+    print(f"\n\tTop {k}:\n")
+    while k > 0:
+        max_k = [key for key, value in ngrams.items() if value == max(ngrams.values())]
+        for element in max_k:
+            if k > 0 :
+                print(f"\t{_k - k}.{element} - {ngrams[element]}")
+                k -= 1
+                ngrams.pop(element)
+            else:
+                return
