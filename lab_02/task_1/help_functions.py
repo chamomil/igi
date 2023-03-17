@@ -48,4 +48,8 @@ def count_nondec(sentence_list):
     return num
 
 
-
+def check_numbers(sentence_list):
+    for sentence in sentence_list:
+        if sentence.isdigit():
+            sentence_list.remove(sentence)
+    return sentence_list

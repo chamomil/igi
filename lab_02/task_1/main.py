@@ -1,5 +1,5 @@
 import re
-from help_functions import lowercase_search, name_search, quotes_search, get_text, count_nondec
+from help_functions import lowercase_search, name_search, quotes_search, get_text, count_nondec, check_numbers
 
 EXCEPTIONS = ['Mr\.', 'Mrs\.', 'Dr\.', 'ca?\.', 'et al\.', 'Lt\.', 'Rep\.', 'B\.A\.',
               'Ph\.D\.', 'M\.D\.', 'Jan\.', 'Feb\.', 'Mar\.', 'Apr\.', 'Jun\.', 'Jul\.', 'Aug\.', 'Sept\.', 'Oct\.',
@@ -26,6 +26,9 @@ def sentences(text: str):
     amount_of_sentence, amount_of_nondec = quotes_search(quotes_list, amount_of_sentence, amount_of_nondec)
 
     amount_of_sentence += 1
+    if text[-1] == '?' or text[-1] == '!':
+        amount_of_nondec += 1
+
     print(f"Amount of sentences: {amount_of_sentence}")
     print(f"Amount of non-declarative sentences: {amount_of_nondec}")
     return amount_of_sentence
@@ -33,6 +36,7 @@ def sentences(text: str):
 
 def average_length(text: str, amount_of_sentences):
     words = re.findall(r'\b\w+\b', text)
+    check_numbers(words)
     amount_of_words = len(words)
     length = 0
 
