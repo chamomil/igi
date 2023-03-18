@@ -54,6 +54,12 @@ class CliStorage:  # class to build interaction between storage and terminal
                 commands.pop(0)
                 regex = "".join(commands)
 
-                set_of_found = self._storage.grep(regex)
-                for elements in set_of_found:
-
+                try:
+                    list_of_found = self._storage.grep(regex)
+                    if len(list_of_found) == 0:
+                        print("No such elements")
+                    else:
+                        for element in list_of_found:
+                            print(element)
+                except:
+                    print("Regular expression is incorrect")

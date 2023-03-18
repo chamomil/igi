@@ -23,14 +23,9 @@ class Storage:
         return self.__set_of_elements
 
     def grep(self, regex):
-        set_of_found = list(self.__set_of_elements.copy())
-        for element in set_of_found:
+        set_of_found = []
+        for element in self.__set_of_elements:
             matching = re.findall(regex, element)
-            if len(matching) is 0:
-                set_of_found.remove(element)
-                set_of_found.append("No such element")
-            else:
-                set_of_found.remove(element)
-                for m in matching:
-                    set_of_found.append(m)
+            for m in matching:
+                set_of_found.append(m)
         return set_of_found
