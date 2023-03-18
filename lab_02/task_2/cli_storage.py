@@ -18,13 +18,16 @@ class CliStorage:  # class to build interaction between storage and terminal
 
     def command(self):
         while True:
-            command_text = input("Enter a command:\n\t")
-            commands = command_text.split(' ')
+            command_text = input("\tEnter a command: ")
+            commands = re.findall(r'\b\w+\b', command_text)  # command_text.split(' ')
 
             if commands[0] == "add":
                 commands.pop(0)
-                self._storage.add(commands)
-                print("Successfully added arguments to storage")
+                if len(commands) == 0:
+                    print("Error: no arguments in command 'add'")
+                else:
+                    self._storage.add(commands)
+                    print("Successfully added arguments to storage")
 
             elif commands[0] == "remove":
                 try:
@@ -63,3 +66,14 @@ class CliStorage:  # class to build interaction between storage and terminal
                             print(element)
                 except:
                     print("Regular expression is incorrect")
+
+            elif commands[0] == "save":
+                self._storage.save()
+                print("Successfully saved")
+
+            elif commands[0] == "load":
+                try:
+                    self._storage.load()
+                    print("Successfully loaded")
+                except:
+                    print("Error, no saved data for this user")

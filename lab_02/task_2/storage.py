@@ -1,4 +1,5 @@
 import re
+import pickle
 
 
 class Storage:
@@ -29,3 +30,11 @@ class Storage:
             for m in matching:
                 set_of_found.append(m)
         return set_of_found
+
+    def save(self):
+        path = self.__username + ".pkl"
+        pickle.dump(self.__set_of_elements, open(path, 'wb'))
+
+    def load(self):
+        path = self.__username + ".pkl"
+        self.__set_of_elements = pickle.load(open(path, 'rb'))
