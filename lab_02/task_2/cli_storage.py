@@ -18,62 +18,88 @@ class CliStorage:  # class to build interaction between storage and terminal
 
     def command(self):
         while True:
-            command_text = input("\tEnter a command: ")
-            commands = re.findall(r'\b\w+\b', command_text)  # command_text.split(' ')
+            command_text = input("\n\tEnter a command: ")
+            commands = re.findall(r'\b\w+\b', command_text)
 
             if commands[0] == "add":
-                commands.pop(0)
-                if len(commands) == 0:
-                    print("Error: no arguments in command 'add'")
-                else:
-                    self._storage.add(commands)
-                    print("Successfully added arguments to storage")
-
+                self.add_handler(commands)
             elif commands[0] == "remove":
-                try:
-                    self._storage.remove(commands[1])
-                    print("Successfully removed argument from storage")
-                except:
-                    print("No such element in storage")
-
+                self.remove_handler(commands)
             elif commands[0] == "find":
-                commands.pop(0)
-
-                for key in commands:
-                    if self._storage.find(key):
-                        print(key)
-                    else:
-                        print(f"No such key as {key}")
-
+                self.find_handler(commands)
             elif commands[0] == "list":
-                list_all = self._storage.list_all()
-
-                if len(list_all) == 0:
-                    print("Storage is empty")
-                else:
-                    print(list_all)
-
+                self.list_handler()
             elif commands[0] == "grep":
-                commands.pop(0)
-                regex = "".join(commands)
-
-                try:
-                    list_of_found = self._storage.grep(regex)
-                    if len(list_of_found) == 0:
-                        print("No such elements")
-                    else:
-                        for element in list_of_found:
-                            print(element)
-                except:
-                    print("Regular expression is incorrect")
-
+                self.grep_handler(commands)
             elif commands[0] == "save":
-                self._storage.save()
-                print("Successfully saved")
-
+                self.save_handler()
             elif commands[0] == "load":
-                try:
-                    self._storage.load()
-                    print("Successfully loaded")
-                except:
-                    print("Error, no saved data for this user")
+                self.load_handler()
+            elif commands[0] == "switch":
+                self.run()
+            elif commands[0] == "exit":
+                return
+            else:
+                print("Wrong command")
+
+    def add_handler(self, commands):
+        if len(commands) == 0:
+            print("Error: no arguments in command 'add'")
+        else:
+            self._storage.add(commands)
+            print("Successfully added arguments to storage")
+
+    def remove_handler(self, commands):
+        commands.pop(0)
+        if len(commands) == 0:
+            print("Error: no arguments in command 'remove'")
+
+        try:
+            self._storage.remove(commands)
+            print("Successfully removed argument from storage")
+        except:
+            print("No such element in storage")
+
+    def find_handler(self, commands):
+        commands.pop(0)
+        if len(commands) == 0:
+            print("Error: no arguments in command 'find'")
+
+        for key in commands:
+            if self._storage.find(key):
+                print(key)
+            else:
+                print(f"No such key as {key}")
+
+    def list_handler(self):
+        list_all = self._storage.list_all()
+
+        if len(list_all) == 0:
+            print("Storage is empty")
+        else:
+            print(list_all)
+
+    def grep_handler(self, commands):
+        commands.pop(0)
+        regex = "".join(commands)
+
+        try:
+            list_of_found = self._storage.grep(regex)
+            if len(list_of_found) == 0:
+                print("No such elements")
+            else:
+                for element in list_of_found:
+                    print(element)
+        except:
+            print("Regular expression is incorrect or absent")
+
+    def save_handler(self):
+        self._storage.save()
+        print("Successfully saved")
+
+    def load_handler(self):
+        try:
+            self._storage.load()
+            print("Successfully loaded")
+        except:
+            print("Error, no saved data for this user")

@@ -14,8 +14,9 @@ class Storage:
         for key in keys:
             self.__set_of_elements.add(key)
 
-    def remove(self, key):
-        self.__set_of_elements.remove(key)
+    def remove(self, keys):
+        for key in keys:
+            self.__set_of_elements.remove(key)
 
     def find(self, key):
         return self.__set_of_elements.__contains__(key)
