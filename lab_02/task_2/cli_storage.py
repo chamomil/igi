@@ -19,7 +19,7 @@ class CliStorage:  # class to build interaction between storage and terminal
     def command(self):
         while True:
             command_text = input("\n\tEnter a command: ")
-            commands = re.findall(r'\b\w+\b', command_text)
+            commands = command_text.split(" ")
 
             if commands[0] == "add":
                 self.add_handler(commands)
