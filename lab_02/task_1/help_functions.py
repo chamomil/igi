@@ -2,13 +2,22 @@ from re import findall
 
 
 def get_text() -> str:
-    # text = input("Enter text: ")
+    while True:
+        command = input("To read text from file enter 'file', to enter it manually enter 'enter'\n")
 
-    file = open('text.txt', 'r')
-    text = file.read()
-    print(f"\tText from file\n{text}")
-    file.close()
-    return text
+        if command == "file":
+            file = open('text.txt', 'r')
+            text = file.read()
+            print(f"\tText from file\n{text}")
+            file.close()
+            return text
+        elif command == "enter":
+            text = input("Enter text: ")
+            return text
+        else:
+            print("Wrong input")
+
+
 
 
 def name_search(text: str):

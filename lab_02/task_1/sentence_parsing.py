@@ -48,10 +48,20 @@ def average_length(text: str, amount_of_sentences):
 
 
 def ngrams(text: str, words):
-    # n = input("Enter n: ")
-    # k = input("Enter k: ")
-    n = 4
-    k = 10
+    try:
+        n = int(input("If input is incorrect, default value will be used. Enter n: "))
+    except:
+        n = 4
+    if n <= 0:
+        n = 4
+
+    try:
+        k = int(input("If input is incorrect, default value will be used. Enter n: "))
+    except:
+        k = 10
+    if k <= 0:
+        k = 10
+
     ngrams_dict = {}
     ngram = ""
 
