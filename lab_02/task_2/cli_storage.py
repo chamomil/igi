@@ -1,5 +1,5 @@
 from storage import Storage
-import re
+from pathlib import Path
 
 
 class CliStorage:  # class to build interaction between storage and terminal
@@ -10,34 +10,49 @@ class CliStorage:  # class to build interaction between storage and terminal
 
     def run(self):
         self.set_username()
+        self.load_last()
         self.command()
 
     def set_username(self):
-        username = input("Enter username: ")
+        while True:
+            username = input("Enter username: ")
+            if len(username) == 0:
+                print("empty input")
+                continue
+            break
         self._storage.set_username(username)
+
+    def load_last(self):
+        path = Path(self._storage.get_username() + '.pkl')
+        if path.exists():
+            answer = input("Do you wish to load data for this user? Enter 'y' to load")
+            if answer == 'y':
+                self.load_handler()
 
     def command(self):
         while True:
-            command_text = input("\n\tEnter a command: ")
+            command_text = input("\nEnter a command: ")
             commands = command_text.split(" ")
-
-            if commands[0] == "add":
+            action = commands.pop(0)
+            if action == "add":
                 self.add_handler(commands)
-            elif commands[0] == "remove":
+            elif action == "remove":
                 self.remove_handler(commands)
-            elif commands[0] == "find":
+            elif action == "find":
                 self.find_handler(commands)
-            elif commands[0] == "list":
+            elif action == "list":
                 self.list_handler()
-            elif commands[0] == "grep":
+            elif action == "grep":
                 self.grep_handler(commands)
-            elif commands[0] == "save":
+            elif action == "save":
                 self.save_handler()
-            elif commands[0] == "load":
+            elif action == "load":
                 self.load_handler()
-            elif commands[0] == "switch":
-                self.run()
-            elif commands[0] == "exit":
+            elif action == "switch":
+                self.switch_handler()
+            elif action == "help":
+                self.help_handler()
+            elif action == "exit":
                 return
             else:
                 print("Wrong command")
@@ -50,9 +65,9 @@ class CliStorage:  # class to build interaction between storage and terminal
             print("Successfully added arguments to storage")
 
     def remove_handler(self, commands):
-        commands.pop(0)
         if len(commands) == 0:
             print("Error: no arguments in command 'remove'")
+            return
 
         try:
             self._storage.remove(commands)
@@ -61,9 +76,9 @@ class CliStorage:  # class to build interaction between storage and terminal
             print("No such element in storage")
 
     def find_handler(self, commands):
-        commands.pop(0)
         if len(commands) == 0:
             print("Error: no arguments in command 'find'")
+            return
 
         for key in commands:
             if self._storage.find(key):
@@ -80,7 +95,6 @@ class CliStorage:  # class to build interaction between storage and terminal
             print(list_all)
 
     def grep_handler(self, commands):
-        commands.pop(0)
         regex = "".join(commands)
 
         try:
@@ -103,3 +117,22 @@ class CliStorage:  # class to build interaction between storage and terminal
             print("Successfully loaded")
         except:
             print("Error, no saved data for this user")
+
+
+    def switch_handler(self):
+        answer = input("Do you wish to save your data before switching? Enter 'y' to save it\n")
+        if answer == "y":
+            self.save_handler()
+        raise Exception('switched to another user')
+
+    def help_handler(self):
+        print("\tadd\t\tadds one or more elements to container")
+        print("\tremove\tremoves one or more elements from container")
+        print("\tfind\tfinds one or more elements in container (if the container doesn't contain such an element the\n"
+              "\t\t\tinfo will be printed)")
+        print("\tlist\tlists all the elements kept in container")
+        print("\tgrep\tby the given regex searches for elements in container")
+        print("\tsave\tsaves data to file")
+        print("\tload\tloads data from file")
+        print("\tswitch\tswitches to choosing another user")
+        print("\texit\tstops the program")

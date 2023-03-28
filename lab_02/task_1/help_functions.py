@@ -1,23 +1,22 @@
 from re import findall
+from pathlib import Path
 
 
 def get_text() -> str:
     while True:
         command = input("To read text from file enter 'file', to enter it manually enter 'enter'\n")
-
         if command == "file":
-            file = open('text.txt', 'r')
-            text = file.read()
-            print(f"\tText from file\n{text}")
-            file.close()
+            path = Path('text2.txt')
+            path.touch(exist_ok=True)
+            with open(path, 'r') as file:
+                text = file.read()
+                print(f"\tText from file\n{text}")
             return text
         elif command == "enter":
             text = input("Enter text: ")
             return text
         else:
             print("Wrong input")
-
-
 
 
 def name_search(text: str):
@@ -66,6 +65,9 @@ def check_numbers(sentence_list):
 
 def max_search(ngrams: dict, k: int):
     _k = k + 1
+    if k > len(ngrams):
+        k = len(ngrams)
+
     print(f"\n\tTop {k}:\n")
     while k > 0:
         max_k = [key for key, value in ngrams.items() if value == max(ngrams.values())]

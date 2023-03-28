@@ -4,9 +4,15 @@ from help_functions import get_text
 
 def main():
     text = get_text()
-    amount_of_sentences = sentences(text)
-    words = average_length(text, amount_of_sentences)
-    ngrams(text, words)
+
+    try:
+        amount_of_sentences = sentences(text)
+    except:
+        return
+    if amount_of_sentences != 0:
+        words = average_length(text, amount_of_sentences)
+        if len(words) != 0:
+            ngrams(text, words)
 
 
 if __name__ == '__main__':
