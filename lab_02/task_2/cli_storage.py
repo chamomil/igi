@@ -25,7 +25,7 @@ class CliStorage:  # class to build interaction between storage and terminal
     def load_last(self):
         path = Path(self._storage.get_username() + '.pkl')
         if path.exists():
-            answer = input("Do you wish to load data for this user? Enter 'y' to load")
+            answer = input("Do you wish to load data for this user? Enter 'y' to load: ")
             if answer == 'y':
                 self.load_handler()
 
@@ -120,7 +120,7 @@ class CliStorage:  # class to build interaction between storage and terminal
 
 
     def switch_handler(self):
-        answer = input("Do you wish to save your data before switching? Enter 'y' to save it\n")
+        answer = input("Do you wish to save your data before switching? Enter 'y' to save it: ")
         if answer == "y":
             self.save_handler()
         raise Exception('switched to another user')
