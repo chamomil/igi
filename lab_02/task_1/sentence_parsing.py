@@ -28,12 +28,9 @@ def sentences(text: str):
             amount_of_nondec += 1
             amount_of_sentence += 1
     except:
-        print("Text is empty")
         raise Exception
 
-    print(f"Amount of sentences: {amount_of_sentence}")
-    print(f"Amount of non-declarative sentences: {amount_of_nondec}")
-    return amount_of_sentence
+    return amount_of_sentence, amount_of_nondec
 
 
 def average_length(text: str, amount_of_sentences):
@@ -46,19 +43,19 @@ def average_length(text: str, amount_of_sentences):
         length += len(word)
 
     average_sentence = length / amount_of_sentences
-    print(f"Average length of the sentence: {average_sentence}")
 
+    average_word: float = 0.0
     try:
         average_word = length / amount_of_words
-        print(f"Average length of the words: {average_word}")
-    except:
+    except ZeroDivisionError:
         print("No words were found")
-    return words
+
+    return words, average_sentence, average_word
 
 
-def ngrams(text: str, words):
+def ngrams(words):
     try:
-        n = int(input("If input is incorrect, default value will be used. Enter n: "))
+        n = int(input("Enter n: "))
     except:
         n = 4
     if n <= 0:
@@ -81,7 +78,7 @@ def ngrams(text: str, words):
         ngram = ""
 
     try:
-        k = int(input("If input is incorrect, default value will be used. Enter k: "))
+        k = int(input("Enter k: "))
     except:
         k = 10
     if k <= 0:
@@ -90,4 +87,4 @@ def ngrams(text: str, words):
         print("k is bigger that the amount of ngrams, number of ngrams will be used instead of it.")
         k = len(ngrams_dict)
 
-    max_search(ngrams_dict, k)
+    return ngrams_dict, k

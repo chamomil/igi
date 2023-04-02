@@ -68,11 +68,10 @@ def max_search(ngrams: dict, k: int):
     if k > len(ngrams):
         k = len(ngrams)
 
-    print(f"\n\tTop {k}:\n")
     while k > 0:
         max_k = [key for key, value in ngrams.items() if value == max(ngrams.values())]
         for element in max_k:
-            if k > 0 :
+            if k > 0:
                 print(f"\t{_k - k}.{element} - {ngrams[element]}")
                 k -= 1
                 ngrams.pop(element)
