@@ -53,17 +53,7 @@ def average_length(text: str, amount_of_sentences):
     return words, average_sentence, average_word
 
 
-def ngrams(words):
-    try:
-        n = int(input("Enter n: "))
-    except:
-        n = 4
-    if n <= 0:
-        n = 4
-    if n > len(words):
-        print("n is bigger that the amount of words, number of words will be used instead of it.")
-        n = len(words)
-
+def ngrams(words, n):
     ngrams_dict = {}
     ngram = ""
 
@@ -77,14 +67,4 @@ def ngrams(words):
             ngrams_dict.__setitem__(ngram, 1)
         ngram = ""
 
-    try:
-        k = int(input("Enter k: "))
-    except:
-        k = 10
-    if k <= 0:
-        k = 10
-    if k > len(ngrams_dict):
-        print("k is bigger that the amount of ngrams, number of ngrams will be used instead of it.")
-        k = len(ngrams_dict)
-
-    return ngrams_dict, k
+    return ngrams_dict
