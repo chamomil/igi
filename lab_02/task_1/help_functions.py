@@ -30,6 +30,7 @@ def lowercase_search(sentence_list, amount_of_sentence, amount_of_nondec):
             amount_of_sentence -= 1
             if nondec_search(sentence):
                 amount_of_nondec -= 1
+
     return amount_of_sentence, amount_of_nondec
 
 
@@ -43,7 +44,8 @@ def quotes_search(quotes_list, amount_of_sentence, amount_of_nondec):
 
 
 def nondec_search(sentence):
-    if sentence[0] == '?' or sentence[0] == '!':
+    # if sentence[0] == '?' or sentence[0] == '!':
+    if sentence[0] in ['?', '!']:
         return True
     return False
 
