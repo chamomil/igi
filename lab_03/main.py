@@ -1,26 +1,24 @@
-import json
 import types
-
 from serializer import Serializer
 
 
-def func():
-    print("hello")
+def func(string="hello"):
+    def text():
+        print(string)
+    return text
 
 
 def main():
     json_ser = Serializer().get_serializer("json")
     val = func
-    k = val.__code__
+    txt = func("hello")
+    k = txt.__name__
+    print(k)
     print(type(k))
-    b = json_ser.dumps(val)
-    print(b)
+    # b = json_ser.dumps(val)
+    # print(b)
     # d = json_ser.loads(b)
     # print(d)
-    # a = json.dumps(val)
-    # print(a)
-    # c = json.loads(a)
-    # print(c)
 
 
 if __name__ == '__main__':
