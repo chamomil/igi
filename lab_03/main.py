@@ -18,13 +18,13 @@ def function(string=(12, 11)):
 def main():
     json_ser = Serializer().get_serializer("json")
     val = {"hello": 2, "hi": 3}
-    # txt = function()()
-    # print(txt.__globals__)
+    txt = function()()
+    # print(txt.__qualname__)
     # print(type(txt.__code__))
-    b = json_ser.dumps(val)
+    b = json_ser.dumps(txt)
     print(b)
     d = json_ser.loads(b)
-    print(d)
+    d()
 
 
 if __name__ == '__main__':

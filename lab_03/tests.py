@@ -1,6 +1,37 @@
+import math
 import unittest
 from serializer import Serializer
 import json
+
+
+def return_5():
+    return 5
+
+
+def recursion(x):
+    if x < 2:
+        return 1
+
+    return recursion(x - 1) * x
+
+
+def square(value):
+    return value * value
+
+
+def sqrt(value):
+    return math.sqrt(value)
+
+
+def function_use_return_5():
+    return return_5()
+
+
+GLOBAL_VAR = 10
+
+
+def function_use_global_value():
+    return GLOBAL_VAR
 
 
 class MyTestCase(unittest.TestCase):
@@ -24,6 +55,15 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(test_set, json_ser.loads(json_ser.dumps(test_set)))
         self.assertEqual(test_frozenset, json_ser.loads(json_ser.dumps(test_frozenset)))
         self.assertEqual(test_dict, json_ser.loads(json_ser.dumps(test_dict)))
+
+    def test_funcs(self):
+        json_ser = Serializer().get_serializer("json")
+        self.assertEqual(return_5(), json_ser.loads(json_ser.dumps(return_5))())
+        self.assertEqual(recursion(1), json_ser.loads(json_ser.dumps(recursion))(1))
+        self.assertEqual(square(1), json_ser.loads(json_ser.dumps(square))(1))
+        self.assertEqual(sqrt(1), json_ser.loads(json_ser.dumps(sqrt))(1))
+        self.assertEqual(function_use_return_5(), json_ser.loads(json_ser.dumps(function_use_return_5))())
+        self.assertEqual(function_use_global_value(), json_ser.loads(json_ser.dumps(function_use_global_value))())
 
 
 if __name__ == '__main__':

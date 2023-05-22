@@ -1,38 +1,31 @@
-import builtins
-import types
-from constants import TYPE
+from lab_03.encoder import Encoder
 
 
 class JsonSerializer:
 
     @classmethod
     def dumps(cls, obj):
+        return cls._dumps(Encoder.encode(obj))
+
+    @classmethod
+    def _dumps(cls, obj):
         if isinstance(obj, bool):
             return str(obj).lower()
         elif isinstance(obj, int | float):
             return str(obj)
-        elif isinstance(obj, str | types.CellType):
+        elif isinstance(obj, str):
             return f'"{obj}"'
         elif isinstance(obj, list):
             return f"[{', '.join([cls.dumps(i) for i in obj])}]"
-        elif isinstance(obj, tuple | set | frozenset):
-            return cls.dumps(dict(__type=type(obj).__name__.lower(), data=list(obj)))
         elif isinstance(obj, dict):
             result = ", ".join([f'"{key}": {cls.dumps(value)}' for key, value in obj.items()])
             return f'{{{result}}}'
-        elif isinstance(obj, types.FunctionType):
-            func_dict = '{"function": {"closure": ' + f'{cls.dumps(obj.__closure__)}, "code": ' \
-                                                      f'{cls.dumps(obj.__code__)}' + "}}"
-            return func_dict
-        elif isinstance(obj, types.CodeType):
-            attrs = [attributes for attributes in dir(obj) if attributes.startswith("co")]
-            return cls.dumps({attr: cls.dumps(getattr(obj, attr)) for attr in attrs})
         else:
             return "null"
 
     @classmethod
     def loads(cls, string: str):
-        return cls._get_instances(cls._loads(string, 0)[0])
+        return Encoder.decode(cls._loads(string, 0)[0])
 
     @classmethod
     def _loads(cls, string: str, start):
@@ -121,19 +114,3 @@ class JsonSerializer:
         if index == len(string):
             index += 1
         return index
-
-    @classmethod
-    def _get_instances(cls, obj):
-        if isinstance(obj, list):
-            return [cls._get_instances(element) for element in obj]
-        elif isinstance(obj, dict):
-            obj_type = obj.get("__type")
-
-            if obj_type is None:
-                return {key: cls._get_instances(val) for key, val in obj.items()}
-            elif obj_type in (TYPE.TUPLE, TYPE.SET, TYPE.FROZENSET):
-                data = obj.get("data")
-                collection = getattr(builtins, obj.get("__type").lower())
-                return collection((cls._get_instances(item) for item in data))
-
-        return obj
