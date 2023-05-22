@@ -2,23 +2,29 @@ import types
 from serializer import Serializer
 
 
-def func(string="hello"):
-    def text():
+def function(string=(12, 11)):
+
+    def text(num=12):
         print(string)
+        print(num)
+
+        def text2(num=12):
+            print(string)
+            print(num)
+        return text2
     return text
 
 
 def main():
     json_ser = Serializer().get_serializer("json")
-    val = func
-    txt = func("hello")
-    k = txt.__name__
-    print(k)
-    print(type(k))
-    # b = json_ser.dumps(val)
-    # print(b)
-    # d = json_ser.loads(b)
-    # print(d)
+    val = {"hello": 2, "hi": 3}
+    # txt = function()()
+    # print(txt.__globals__)
+    # print(type(txt.__code__))
+    b = json_ser.dumps(val)
+    print(b)
+    d = json_ser.loads(b)
+    print(d)
 
 
 if __name__ == '__main__':

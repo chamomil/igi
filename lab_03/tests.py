@@ -17,8 +17,8 @@ class MyTestCase(unittest.TestCase):
         test_list = [1, 2, 3]
         test_tuple = ("jjj", "kkkk")
         test_set = {True, False}
-        test_frozenset = frozenset([34.9, 56.1])
-        test_dict = {"another thing": test_list}
+        test_dict = {"another thing": test_list, "hello": [23, 22]}
+        test_frozenset = frozenset([33, 65])
         self.assertEqual(test_list, json_ser.loads(json_ser.dumps(test_list)))
         self.assertEqual(test_tuple, json_ser.loads(json_ser.dumps(test_tuple)))
         self.assertEqual(test_set, json_ser.loads(json_ser.dumps(test_set)))
