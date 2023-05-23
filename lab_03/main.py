@@ -15,16 +15,39 @@ def function(string=(12, 11)):
     return text
 
 
+class ClassA:
+    def __init__(self):
+        super().__init__()
+        self.a = 1
+
+    def method_a(self):
+        return self.a
+
+
+class ClassB:
+    def __init__(self):
+        super().__init__()
+        self.b = 2
+
+    def method_b(self):
+        return self.b
+
+
+class ClassC(ClassB, ClassA):
+    def __init__(self):
+        super().__init__()
+
+
 def main():
     json_ser = Serializer().get_serializer("json")
-    val = {"hello": 2, "hi": 3}
-    txt = function()()
+    val = ClassC()
+    # txt = function()()
     # print(txt.__qualname__)
     # print(type(txt.__code__))
-    b = json_ser.dumps(txt)
+    b = json_ser.dumps(val)
     print(b)
     d = json_ser.loads(b)
-    d()
+    print(d)
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ class Encoder:
 
     @classmethod
     def encode(cls, obj):
-        if isinstance(obj, bool | int | float | str):
+        if isinstance(obj, bool | int | float | str | None):
             return obj
         elif isinstance(obj, list):
             return type(obj)((cls.encode(item) for item in obj))
@@ -37,6 +37,8 @@ class Encoder:
         elif isinstance(obj, property):
             data = dict(fget=cls.encode(obj.fget), fset=cls.encode(obj.fset), fdel=cls.encode(obj.fdel))
             return dict(__type=TYPE.PROPERTY, data=data)
+        elif isinstance(obj, object):
+            return cls._object_encode(obj)
 
     @classmethod
     def decode(cls, obj):
@@ -66,6 +68,8 @@ class Encoder:
             elif obj_type == TYPE.PROPERTY:
                 data = cls.decode(obj.get("data"))
                 return property(**data)
+            elif obj_type == TYPE.OBJECT:
+                return cls._get_object(obj)
 
         return obj
 
@@ -107,6 +111,20 @@ class Encoder:
         ]
         data["__name__"] = obj.__name__
         return dict(__type=TYPE.CLASS, data=data)
+
+    @classmethod
+    def _object_encode(cls, obj):
+        data = {
+            "__class__": cls.encode(obj.__class__),
+            "attrs": {
+                attr: cls.encode(value)
+                for (attr, value) in inspect.getmembers(obj)
+                if not attr.startswith("__")
+                   and not isinstance(value, types.FunctionType)
+                   and not isinstance(value, types.MethodType)
+            },
+        }
+        return dict(__type=TYPE.OBJECT, data=data)
 
     @classmethod
     def _get_func(cls, obj):
@@ -153,4 +171,14 @@ class Encoder:
 
                 setattr(result, key, func)
 
+        return result
+
+    @classmethod
+    def _get_object(cls, obj):
+        data = obj.get("data")
+        obj_class = cls.decode(data["__class__"])
+        result = object.__new__(obj_class)
+        result.__dict__ = {
+            key: cls.decode(value) for key, value in data["attrs"].items()
+        }
         return result

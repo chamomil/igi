@@ -124,6 +124,7 @@ class MyTestCase(unittest.TestCase):
             json_ser.dumps(ClassWithStaticAndClassMethods))().temperature)
         self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC))().method_a())
         self.assertEqual(ClassC().method_b(), json_ser.loads(json_ser.dumps(ClassC))().method_b())
+        self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC())).method_a())
 
 
 if __name__ == '__main__':

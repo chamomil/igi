@@ -13,6 +13,7 @@ class TYPE(StrEnum):
     BYTES = auto()
     CLASS = auto()
     PROPERTY = auto()
+    OBJECT = auto()
 
 
 UNNECESSARY_CODE_TYPES = (
