@@ -1,8 +1,8 @@
 from encoder import Encoder
+import re
 
 
-class JsonSerializer:
-
+class XmlSerializer:
     @classmethod
     def load(cls, file):
         return cls.loads(file.read())
@@ -17,19 +17,16 @@ class JsonSerializer:
 
     @classmethod
     def _dumps(cls, obj):
-        if isinstance(obj, bool):
-            return str(obj).lower()
-        elif isinstance(obj, int | float):
-            return str(obj)
-        elif isinstance(obj, str):
-            return f'"{obj}"'
+        if isinstance(obj, int | float | bool | str | None):
+            obj_type = type(obj).__name__
+            return f"<{obj_type}>{obj}</{obj_type}>"
         elif isinstance(obj, list):
-            return f"[{', '.join([cls.dumps(i) for i in obj])}]"
+            return f"<list>{[cls.dumps(i) for i in obj]}</list>"
         elif isinstance(obj, dict):
             result = ", ".join([f'"{key}": {cls.dumps(value)}' for key, value in obj.items()])
             return f'{{{result}}}'
         else:
-            return "null"
+            return "<null>"
 
     @classmethod
     def loads(cls, string: str):
@@ -37,14 +34,14 @@ class JsonSerializer:
 
     @classmethod
     def _loads(cls, string: str, start):
-        if string[start] == '"':
+        if string.startswith("<str>"):
             return cls._get_str(string, start)
-        elif string[start].isdigit() or string[start] == '-':
+        elif string.startswith(("<int>", "<float>")):
             return cls._get_num(string, start)
-        elif string[start] == "t" or string[start] == "f":
+        elif string.startswith("<bool>"):
             return cls._get_bool(string, start)
-        elif string[start] == "n":
-            return None, start + 4
+        elif string.startswith("<NoneType>"):
+            return None, start + 25
         elif string[start] == '[':  # for list
             return cls._get_list(string, start)
         elif string[0] == '{':  # for dict
@@ -54,29 +51,37 @@ class JsonSerializer:
 
     @staticmethod
     def _get_str(string, start):
+        start += 5
         end = start + 1
-        while string[end] != '"':
+        while string[end] != "<":
             end += 1
-        return string[start + 1: end], end + 1
+        return string[start:end], end + 6
 
     @staticmethod
     def _get_num(string, start):
+        num_type = string.startswith("<int>")
+        if num_type:
+            start += 5
+        else:
+            start += 7
+
         end = start + 1
-        while len(string) > end and (string[end].isdigit() or string[end] == "."):
+        while len(string) > end and (string[end].isdigit() or string[end] in ('.', '-')):
             end += 1
 
         num = string[start:end]
-        if num.count("."):
-            return float(num), end
-        return int(num), end
+        if num_type:
+            return int(num), end + 6
+        return float(num), end + 8
 
     @staticmethod
     def _get_bool(string, start):
-        result = string[start] == "t"
-        num_of_letters = 5
-        if result:
-            num_of_letters = 4
-        return result, start + num_of_letters
+        start += 6
+        end = start + 5
+        if string[start] == "T":
+            end -= 1
+        result = string[start:end]
+        return result == "True", end + 7
 
     @classmethod
     def _get_list(cls, string: str, start):

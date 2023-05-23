@@ -96,7 +96,7 @@ def doubled():
 
 
 class MyTestCase(unittest.TestCase):
-    def test_primitives(self):
+    def test_primitives_json(self):
         json_ser = Serializer().get_serializer("json")
         self.assertEqual(json.dumps(18), json_ser.dumps(18))
         self.assertEqual(json.dumps(18.5), json_ser.dumps(18.5))
@@ -104,7 +104,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(json.dumps("hello"), json_ser.dumps("hello"))
         self.assertEqual(json.dumps(None), json_ser.dumps(None))
 
-    def test_collections(self):
+    def test_collections_json(self):
         json_ser = Serializer().get_serializer("json")
         test_list = [1, 2, 3]
         test_tuple = ("jjj", "kkkk")
@@ -117,7 +117,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(test_frozenset, json_ser.loads(json_ser.dumps(test_frozenset)))
         self.assertEqual(test_dict, json_ser.loads(json_ser.dumps(test_dict)))
 
-    def test_funcs(self):
+    def test_funcs_json(self):
         json_ser = Serializer().get_serializer("json")
         self.assertEqual(return_5(), json_ser.loads(json_ser.dumps(return_5))())
         self.assertEqual(recursion(1), json_ser.loads(json_ser.dumps(recursion))(1))
@@ -126,7 +126,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(function_use_return_5(), json_ser.loads(json_ser.dumps(function_use_return_5))())
         self.assertEqual(function_use_global_value(), json_ser.loads(json_ser.dumps(function_use_global_value))())
 
-    def test_class(self):
+    def test_class_json(self):
         json_ser = Serializer().get_serializer("json")
         self.assertEqual(ClassWithValue.a, json_ser.loads(json_ser.dumps(ClassWithValue)).a)
         self.assertEqual(ClassWithStaticAndClassMethods.test_static(), json_ser.loads(
@@ -139,10 +139,31 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(ClassC().method_b(), json_ser.loads(json_ser.dumps(ClassC))().method_b())
         self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC())).method_a())
 
-    def test_iter(self):
+    def test_iter_json(self):
         json_ser = Serializer().get_serializer("json")
         iterator = iter([45, 35, 9, 54])
         self.assertSequenceEqual([45, 35, 9, 54], list(json_ser.loads(json_ser.dumps(iterator))))
+
+    def test_primitives_xml(self):
+        xml_ser = Serializer().get_serializer("xml")
+        self.assertEqual(18, xml_ser.loads(xml_ser.dumps(18)))
+        self.assertEqual(18.5, xml_ser.loads(xml_ser.dumps(18.5)))
+        self.assertEqual(False, xml_ser.loads(xml_ser.dumps(False)))
+        self.assertEqual("hello", xml_ser.loads(xml_ser.dumps("hello")))
+        self.assertEqual(None, xml_ser.loads(xml_ser.dumps(None)))
+
+    def test_collections_xml(self):
+        xml_ser = Serializer().get_serializer("xml")
+        test_list = [1, 2, 3]
+        test_tuple = ("jjj", "kkkk")
+        test_set = {True, False}
+        test_dict = {"another thing": test_list, "hello": [23, 22]}
+        test_frozenset = frozenset([33, 65])
+        self.assertEqual(test_list, xml_ser.loads(xml_ser.dumps(test_list)))
+        # self.assertEqual(test_tuple, xml_ser.loads(xml_ser.dumps(test_tuple)))
+        # self.assertEqual(test_set, xml_ser.loads(xml_ser.dumps(test_set)))
+        # self.assertEqual(test_frozenset, xml_ser.loads(xml_ser.dumps(test_frozenset)))
+        # self.assertEqual(test_dict, xml_ser.loads(xml_ser.dumps(test_dict)))
 
 
 if __name__ == '__main__':

@@ -39,14 +39,14 @@ class ClassC(ClassB, ClassA):
 
 
 def main():
-    json_ser = Serializer().get_serializer("json")
-    val = ClassC()
+    xml_ser = Serializer().get_serializer("xml")
+    val = [1, 3, 5]
     # txt = function()()
     # print(txt.__qualname__)
     # print(type(txt.__code__))
-    b = json_ser.dumps(val)
+    b = xml_ser.dumps(val)
     print(b)
-    d = json_ser.loads(b)
+    d = xml_ser.loads(b)
     print(d)
 
 
