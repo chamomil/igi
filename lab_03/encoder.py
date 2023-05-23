@@ -4,7 +4,7 @@ import inspect
 import types
 
 from lab_03.constants import TYPE, UNNECESSARY_CODE_TYPES, UNNECESSARY_DUNDER, UNNECESSARY_TYPES
-from lab_03.help_funcs import get_class
+from lab_03.help_funcs import get_class, is_iterable
 
 
 class Encoder:
@@ -37,6 +37,8 @@ class Encoder:
         elif isinstance(obj, property):
             data = dict(fget=cls.encode(obj.fget), fset=cls.encode(obj.fset), fdel=cls.encode(obj.fdel))
             return dict(__type=TYPE.PROPERTY, data=data)
+        elif is_iterable(obj):
+            return dict(__type=TYPE.ITERATOR, data=list(map(cls.encode, obj)))
         elif isinstance(obj, object):
             return cls._object_encode(obj)
 
@@ -70,6 +72,8 @@ class Encoder:
                 return property(**data)
             elif obj_type == TYPE.OBJECT:
                 return cls._get_object(obj)
+            elif obj_type == TYPE.ITERATOR:
+                return iter(cls.decode(value) for value in obj.get("data"))
 
         return obj
 

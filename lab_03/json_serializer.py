@@ -4,6 +4,14 @@ from lab_03.encoder import Encoder
 class JsonSerializer:
 
     @classmethod
+    def load(cls, file):
+        return cls.loads(file.read())
+
+    @classmethod
+    def dump(cls, obj, file):
+        file.write(cls.dumps(obj))
+
+    @classmethod
     def dumps(cls, obj):
         return cls._dumps(Encoder.encode(obj))
 

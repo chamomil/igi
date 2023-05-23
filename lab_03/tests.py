@@ -81,6 +81,19 @@ class ClassC(ClassB, ClassA):
         super().__init__()
 
 
+def double_result(func):
+    def wrapper(*args, **kwargs):
+        value = func(*args, **kwargs)
+        return value * 2
+
+    return wrapper
+
+
+@double_result
+def doubled():
+    return 5
+
+
 
 class MyTestCase(unittest.TestCase):
     def test_primitives(self):
@@ -125,6 +138,11 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC))().method_a())
         self.assertEqual(ClassC().method_b(), json_ser.loads(json_ser.dumps(ClassC))().method_b())
         self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC())).method_a())
+
+    def test_iter(self):
+        json_ser = Serializer().get_serializer("json")
+        iterator = iter([45, 35, 9, 54])
+        self.assertSequenceEqual([45, 35, 9, 54], list(json_ser.loads(json_ser.dumps(iterator))))
 
 
 if __name__ == '__main__':

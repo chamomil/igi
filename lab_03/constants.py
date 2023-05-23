@@ -14,6 +14,7 @@ class TYPE(StrEnum):
     CLASS = auto()
     PROPERTY = auto()
     OBJECT = auto()
+    ITERATOR = auto()
 
 
 UNNECESSARY_CODE_TYPES = (
