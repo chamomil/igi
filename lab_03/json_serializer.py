@@ -1,4 +1,5 @@
 from encoder import Encoder
+from help_funcs import count_braces
 
 
 class JsonSerializer:
@@ -80,7 +81,7 @@ class JsonSerializer:
 
     @classmethod
     def _get_list(cls, string: str, start):
-        end = cls._count_braces(string, start + 1, ('[', ']'))
+        end = count_braces(string, start + 1, ('[', ']'))
         arr = []
         index = start + 1
 
@@ -94,7 +95,7 @@ class JsonSerializer:
 
     @classmethod
     def _get_dict(cls, string: str, start):
-        end = cls._count_braces(string, start + 1, ('{', '}'))
+        end = count_braces(string, start + 1, ('{', '}'))
         index = start + 1
         result = dict()
 
@@ -108,17 +109,3 @@ class JsonSerializer:
             value, index = cls._loads(string, index)
             result[key] = value
         return result, end
-
-    @staticmethod
-    def _count_braces(string, index, braces_type):
-        braces_count = 1
-        while braces_count:
-            if string[index] == braces_type[0]:
-                braces_count += 1
-            if string[index] == braces_type[1]:
-                braces_count -= 1
-            index += 1
-
-        if index == len(string):
-            index += 1
-        return index

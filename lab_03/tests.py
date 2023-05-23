@@ -160,10 +160,32 @@ class MyTestCase(unittest.TestCase):
         test_dict = {"another thing": test_list, "hello": [23, 22]}
         test_frozenset = frozenset([33, 65])
         self.assertEqual(test_list, xml_ser.loads(xml_ser.dumps(test_list)))
-        # self.assertEqual(test_tuple, xml_ser.loads(xml_ser.dumps(test_tuple)))
-        # self.assertEqual(test_set, xml_ser.loads(xml_ser.dumps(test_set)))
-        # self.assertEqual(test_frozenset, xml_ser.loads(xml_ser.dumps(test_frozenset)))
-        # self.assertEqual(test_dict, xml_ser.loads(xml_ser.dumps(test_dict)))
+        self.assertEqual(test_tuple, xml_ser.loads(xml_ser.dumps(test_tuple)))
+        self.assertEqual(test_set, xml_ser.loads(xml_ser.dumps(test_set)))
+        self.assertEqual(test_frozenset, xml_ser.loads(xml_ser.dumps(test_frozenset)))
+        self.assertEqual(test_dict, xml_ser.loads(xml_ser.dumps(test_dict)))
+
+    def test_funcs_xml(self):
+        xml_ser = Serializer().get_serializer("xml")
+        self.assertEqual(return_5(), xml_ser.loads(xml_ser.dumps(return_5))())
+        self.assertEqual(recursion(1), xml_ser.loads(xml_ser.dumps(recursion))(1))
+        self.assertEqual(square(1), xml_ser.loads(xml_ser.dumps(square))(1))
+        self.assertEqual(sqrt(1), xml_ser.loads(xml_ser.dumps(sqrt))(1))
+        self.assertEqual(function_use_return_5(), xml_ser.loads(xml_ser.dumps(function_use_return_5))())
+        self.assertEqual(function_use_global_value(), xml_ser.loads(xml_ser.dumps(function_use_global_value))())
+
+    def test_class_xml(self):
+        xml_ser = Serializer().get_serializer("xml")
+        self.assertEqual(ClassWithValue.a, xml_ser.loads(xml_ser.dumps(ClassWithValue)).a)
+        self.assertEqual(ClassWithStaticAndClassMethods.test_static(), xml_ser.loads(
+            xml_ser.dumps(ClassWithStaticAndClassMethods)).test_static())
+        self.assertEqual(ClassWithStaticAndClassMethods.test_class(), xml_ser.loads(
+            xml_ser.dumps(ClassWithStaticAndClassMethods)).test_class())
+        self.assertEqual(ClassWithStaticAndClassMethods().temperature, xml_ser.loads(
+            xml_ser.dumps(ClassWithStaticAndClassMethods))().temperature)
+        self.assertEqual(ClassC().method_a(), xml_ser.loads(xml_ser.dumps(ClassC))().method_a())
+        self.assertEqual(ClassC().method_b(), xml_ser.loads(xml_ser.dumps(ClassC))().method_b())
+        self.assertEqual(ClassC().method_a(), xml_ser.loads(xml_ser.dumps(ClassC())).method_a())
 
 
 if __name__ == '__main__':

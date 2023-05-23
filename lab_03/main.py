@@ -40,14 +40,14 @@ class ClassC(ClassB, ClassA):
 
 def main():
     xml_ser = Serializer().get_serializer("xml")
-    val = [1, 3, 5]
+    val = ClassC
     # txt = function()()
     # print(txt.__qualname__)
     # print(type(txt.__code__))
     b = xml_ser.dumps(val)
     print(b)
     d = xml_ser.loads(b)
-    print(d)
+    print(d().method_a())
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 from encoder import Encoder
-import re
+from help_funcs import count_structs
 
 
 class XmlSerializer:
@@ -19,14 +19,14 @@ class XmlSerializer:
     def _dumps(cls, obj):
         if isinstance(obj, int | float | bool | str | None):
             obj_type = type(obj).__name__
+            if obj_type not in ("int", "float", "bool", "str", "NoneType"):
+                obj_type = "str"
             return f"<{obj_type}>{obj}</{obj_type}>"
         elif isinstance(obj, list):
-            return f"<list>{[cls.dumps(i) for i in obj]}</list>"
+            return f"<list>{''.join([cls.dumps(i) for i in obj])}</list>"
         elif isinstance(obj, dict):
-            result = ", ".join([f'"{key}": {cls.dumps(value)}' for key, value in obj.items()])
-            return f'{{{result}}}'
-        else:
-            return "<null>"
+            result = "".join([f'<key>{key}</key><value>{cls.dumps(value)}</value>' for key, value in obj.items()])
+            return f'<dict>{result}</dict>'
 
     @classmethod
     def loads(cls, string: str):
@@ -34,36 +34,34 @@ class XmlSerializer:
 
     @classmethod
     def _loads(cls, string: str, start):
-        if string.startswith("<str>"):
+        if string[start:].startswith("<str>"):
             return cls._get_str(string, start)
-        elif string.startswith(("<int>", "<float>")):
+        elif string[start:].startswith(("<int>", "<float>")):
             return cls._get_num(string, start)
-        elif string.startswith("<bool>"):
+        elif string[start:].startswith("<bool>"):
             return cls._get_bool(string, start)
-        elif string.startswith("<NoneType>"):
-            return None, start + 25
-        elif string[start] == '[':  # for list
+        elif string[start:].startswith("<NoneType>"):
+            return None, start + len("<NoneType>None</NoneType>")
+        elif string[start:].startswith("<list>"):
             return cls._get_list(string, start)
-        elif string[0] == '{':  # for dict
+        elif string[start:].startswith("<dict>"):
             return cls._get_dict(string, start)
-        else:
-            return string
 
     @staticmethod
     def _get_str(string, start):
-        start += 5
+        start += len("<str>")
         end = start + 1
-        while string[end] != "<":
+        while string[end:end + len("</str>")] != "</str>":
             end += 1
-        return string[start:end], end + 6
+        return string[start:end], end + len("</str>")
 
     @staticmethod
     def _get_num(string, start):
-        num_type = string.startswith("<int>")
+        num_type = string[start:].startswith("<int>")
         if num_type:
-            start += 5
+            start += len("<int>")
         else:
-            start += 7
+            start += len("<float>")
 
         end = start + 1
         while len(string) > end and (string[end].isdigit() or string[end] in ('.', '-')):
@@ -71,8 +69,8 @@ class XmlSerializer:
 
         num = string[start:end]
         if num_type:
-            return int(num), end + 6
-        return float(num), end + 8
+            return int(num), end + len("</int>")
+        return float(num), end + len("</float>")
 
     @staticmethod
     def _get_bool(string, start):
@@ -85,45 +83,43 @@ class XmlSerializer:
 
     @classmethod
     def _get_list(cls, string: str, start):
-        end = cls._count_braces(string, start + 1, ('[', ']'))
+        start += len("<list>") - 1
+        end = count_structs(string, start + 1, ('<list>', '</list>'))
         arr = []
         index = start + 1
 
-        while index < end - 2:  # end is start for the next part
-            while string[index].startswith((' ', ',', '\n')):
-                index += 1
+        while index < end:  # end is start for the next part
             res, index = cls._loads(string, index)
             arr.append(res)
 
-        return arr, end
+        return arr, end + len("</list>")
 
     @classmethod
     def _get_dict(cls, string: str, start):
-        end = cls._count_braces(string, start + 1, ('{', '}'))
+        start += len("<dict>") - 1
+        end = count_structs(string, start + 1, ('<dict>', '</dict>'))
         index = start + 1
         result = dict()
 
-        while index < end - 2:
-            while string[index].startswith((' ', ',', '\n')):
-                index += 1
-            key, index = cls._get_str(string, index)
-
-            while string[index].startswith((' ', ',', '\n', ':')):
-                index += 1
-            value, index = cls._loads(string, index)
+        while index < end:
+            key, index = cls._get_key(string, index)
+            val_str, index = cls._get_value(string, index)
+            value = cls._loads(val_str, 0)[0]
             result[key] = value
-        return result, end
+        return result, end + len("</dict>")
 
     @staticmethod
-    def _count_braces(string, index, braces_type):
-        braces_count = 1
-        while braces_count:
-            if string[index] == braces_type[0]:
-                braces_count += 1
-            if string[index] == braces_type[1]:
-                braces_count -= 1
-            index += 1
+    def _get_key(string, start):
+        index = start + len("<key>")
+        end = index
+        while string[end:end + len("</key>")] != "</key>":
+            end += 1
 
-        if index == len(string):
-            index += 1
-        return index
+        return string[index:end], end + len("</key>")
+
+    @staticmethod
+    def _get_value(string, start):
+        index = start + len("<value>")
+        end = count_structs(string, index, ('<value>', '</value>'))
+
+        return string[index:end], end + len("</value>")
