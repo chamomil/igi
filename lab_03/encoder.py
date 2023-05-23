@@ -1,8 +1,9 @@
 import base64
 import builtins
+import inspect
 import types
 
-from lab_03.constants import TYPE, UNSERIALIZABLE_CODE_TYPES
+from lab_03.constants import TYPE, UNNECESSARY_CODE_TYPES, UNNECESSARY_DUNDER, UNNECESSARY_TYPES
 from lab_03.help_funcs import get_class
 
 
@@ -23,7 +24,7 @@ class Encoder:
         elif isinstance(obj, types.CodeType):
             attrs = [attributes for attributes in dir(obj) if attributes.startswith("co")]
             data = {attr: cls.encode(getattr(obj, attr)) for attr in attrs if attr not in
-                    UNSERIALIZABLE_CODE_TYPES}
+                    UNNECESSARY_CODE_TYPES}
             return dict(__type=TYPE.CODE, data=data)
         elif isinstance(obj, types.CellType):
             return dict(__type=TYPE.CELL, data=cls.encode(obj.cell_contents))
@@ -31,6 +32,11 @@ class Encoder:
             return dict(__type=TYPE.MODULE, data=obj.__name__)
         elif isinstance(obj, bytes):
             return dict(__type=TYPE.BYTES, data=base64.b64encode(obj).decode("ascii"))
+        elif isinstance(obj, type):
+            return cls._class_encode(obj)
+        elif isinstance(obj, property):
+            data = dict(fget=cls.encode(obj.fget), fset=cls.encode(obj.fset), fdel=cls.encode(obj.fdel))
+            return dict(__type=TYPE.PROPERTY, data=data)
 
     @classmethod
     def decode(cls, obj):
@@ -55,6 +61,11 @@ class Encoder:
                 return __import__(obj.get("data"))
             elif obj_type == TYPE.BYTES:
                 return base64.b64decode(obj.get("data").encode("ascii"))
+            elif obj_type == TYPE.CLASS:
+                return cls._get_class(obj)
+            elif obj_type == TYPE.PROPERTY:
+                data = cls.decode(obj.get("data"))
+                return property(**data)
 
         return obj
 
@@ -83,6 +94,21 @@ class Encoder:
         return dict(__type=TYPE.FUNCTION, data=function, is_method=isinstance(obj, types.MethodType))
 
     @classmethod
+    def _class_encode(cls, obj):
+        data = {
+            attr: cls.encode(getattr(obj, attr))
+            for attr, value in inspect.getmembers(obj)
+            if attr not in UNNECESSARY_DUNDER
+               and type(value) not in UNNECESSARY_TYPES
+        }
+
+        data["__bases__"] = [
+            cls.encode(base) for base in obj.__bases__ if base != object
+        ]
+        data["__name__"] = obj.__name__
+        return dict(__type=TYPE.CLASS, data=data)
+
+    @classmethod
     def _get_func(cls, obj):
         func = cls.decode(obj.get("data"))
         fdict = func.pop("fdict")
@@ -98,3 +124,33 @@ class Encoder:
 
         code_dict = cls.decode(obj.get("data"))
         return f.__code__.replace(**code_dict)
+
+    @classmethod
+    def _get_class(cls, obj):
+        data = obj.get("data")
+
+        class_bases = tuple(cls.decode(base) for base in data.pop("__bases__"))
+        class_dict = {
+            attr: cls.decode(value)
+            for (attr, value) in data.items()
+            if not (isinstance(value, dict) and value.get("__type") == TYPE.FUNCTION)
+        }
+
+        result = type(data["__name__"], class_bases, class_dict)
+        for key, value in data.items():
+            if isinstance(value, dict) and value.get("__type") == TYPE.FUNCTION:
+                try:
+                    func = cls.decode(value)
+                except ValueError:
+                    closure = value.get("data")["closure"]
+                    closure.get("data").append((lambda: result).__closure__[0])
+                    func = cls.decode(value)
+
+                func.__globals__.update({result.__name__: result})
+
+                if value.get("is_method"):
+                    func = types.MethodType(func, result)
+
+                setattr(result, key, func)
+
+        return result

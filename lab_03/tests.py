@@ -34,6 +34,54 @@ def function_use_global_value():
     return GLOBAL_VAR
 
 
+# ------------------------classes----------------------
+
+class ClassWithValue:
+    a = 1
+
+
+class ClassWithStaticAndClassMethods:
+    b = 4
+
+    @staticmethod
+    def test_static():
+        return 5
+
+    @classmethod
+    def test_class(cls):
+        return cls.b
+
+    _temperature = 5
+
+    @property
+    def temperature(self):
+        return self._temperature
+
+
+class ClassA:
+    def __init__(self):
+        super().__init__()
+        self.a = 1
+
+    def method_a(self):
+        return self.a
+
+
+class ClassB:
+    def __init__(self):
+        super().__init__()
+        self.b = 2
+
+    def method_b(self):
+        return self.b
+
+
+class ClassC(ClassB, ClassA):
+    def __init__(self):
+        super().__init__()
+
+
+
 class MyTestCase(unittest.TestCase):
     def test_primitives(self):
         json_ser = Serializer().get_serializer("json")
@@ -64,6 +112,18 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(sqrt(1), json_ser.loads(json_ser.dumps(sqrt))(1))
         self.assertEqual(function_use_return_5(), json_ser.loads(json_ser.dumps(function_use_return_5))())
         self.assertEqual(function_use_global_value(), json_ser.loads(json_ser.dumps(function_use_global_value))())
+
+    def test_class(self):
+        json_ser = Serializer().get_serializer("json")
+        self.assertEqual(ClassWithValue.a, json_ser.loads(json_ser.dumps(ClassWithValue)).a)
+        self.assertEqual(ClassWithStaticAndClassMethods.test_static(), json_ser.loads(
+            json_ser.dumps(ClassWithStaticAndClassMethods)).test_static())
+        self.assertEqual(ClassWithStaticAndClassMethods.test_class(), json_ser.loads(
+            json_ser.dumps(ClassWithStaticAndClassMethods)).test_class())
+        self.assertEqual(ClassWithStaticAndClassMethods().temperature, json_ser.loads(
+            json_ser.dumps(ClassWithStaticAndClassMethods))().temperature)
+        self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC))().method_a())
+        self.assertEqual(ClassC().method_b(), json_ser.loads(json_ser.dumps(ClassC))().method_b())
 
 
 if __name__ == '__main__':
