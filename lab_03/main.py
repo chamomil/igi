@@ -1,5 +1,5 @@
 
-from makarenko_serializer.encoder import Encoder
+from makarenko_serializer.serializer import Serializer
 
 def ed(obj):
     return Encoder.decode(Encoder.encode(obj))
@@ -28,11 +28,7 @@ def doubled():
 
 
 def main():
-    enc = Encoder.encode(top_level())
-    print(enc)
-    dec = Encoder.decode(enc)
-    print(dec.__closure__[0].cell_contents)
-    dec()
-    print(dec)
+    ser = Serializer.create_serializer("json")
+    print (ser.dumps({"hello": 23, "efwf": 86}))
 
 main()
