@@ -1,6 +1,6 @@
 import math
 import unittest
-from serializer import Serializer
+from makarenko_serializer import Serializer
 import json
 
 
@@ -97,7 +97,7 @@ def doubled():
 
 class MyTestCase(unittest.TestCase):
     def test_primitives_json(self):
-        json_ser = Serializer().get_serializer("json")
+        json_ser = Serializer().create_serializer("json")
         self.assertEqual(json.dumps(18), json_ser.dumps(18))
         self.assertEqual(json.dumps(18.5), json_ser.dumps(18.5))
         self.assertEqual(json.dumps(False), json_ser.dumps(False))
@@ -105,7 +105,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(json.dumps(None), json_ser.dumps(None))
 
     def test_collections_json(self):
-        json_ser = Serializer().get_serializer("json")
+        json_ser = Serializer().create_serializer("json")
         test_list = [1, 2, 3]
         test_tuple = ("jjj", "kkkk")
         test_set = {True, False}
@@ -118,7 +118,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(test_dict, json_ser.loads(json_ser.dumps(test_dict)))
 
     def test_funcs_json(self):
-        json_ser = Serializer().get_serializer("json")
+        json_ser = Serializer().create_serializer("json")
         self.assertEqual(return_5(), json_ser.loads(json_ser.dumps(return_5))())
         self.assertEqual(recursion(1), json_ser.loads(json_ser.dumps(recursion))(1))
         self.assertEqual(square(1), json_ser.loads(json_ser.dumps(square))(1))
@@ -127,7 +127,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(function_use_global_value(), json_ser.loads(json_ser.dumps(function_use_global_value))())
 
     def test_class_json(self):
-        json_ser = Serializer().get_serializer("json")
+        json_ser = Serializer().create_serializer("json")
         self.assertEqual(ClassWithValue.a, json_ser.loads(json_ser.dumps(ClassWithValue)).a)
         self.assertEqual(ClassWithStaticAndClassMethods.test_static(), json_ser.loads(
             json_ser.dumps(ClassWithStaticAndClassMethods)).test_static())
@@ -140,12 +140,12 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(ClassC().method_a(), json_ser.loads(json_ser.dumps(ClassC())).method_a())
 
     def test_iter_json(self):
-        json_ser = Serializer().get_serializer("json")
+        json_ser = Serializer().create_serializer("json")
         iterator = iter([45, 35, 9, 54])
         self.assertSequenceEqual([45, 35, 9, 54], list(json_ser.loads(json_ser.dumps(iterator))))
 
     def test_primitives_xml(self):
-        xml_ser = Serializer().get_serializer("xml")
+        xml_ser = Serializer().create_serializer("xml")
         self.assertEqual(18, xml_ser.loads(xml_ser.dumps(18)))
         self.assertEqual(18.5, xml_ser.loads(xml_ser.dumps(18.5)))
         self.assertEqual(False, xml_ser.loads(xml_ser.dumps(False)))
@@ -153,7 +153,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(None, xml_ser.loads(xml_ser.dumps(None)))
 
     def test_collections_xml(self):
-        xml_ser = Serializer().get_serializer("xml")
+        xml_ser = Serializer().create_serializer("xml")
         test_list = [1, 2, 3]
         test_tuple = ("jjj", "kkkk")
         test_set = {True, False}
@@ -166,7 +166,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(test_dict, xml_ser.loads(xml_ser.dumps(test_dict)))
 
     def test_funcs_xml(self):
-        xml_ser = Serializer().get_serializer("xml")
+        xml_ser = Serializer().create_serializer("xml")
         self.assertEqual(return_5(), xml_ser.loads(xml_ser.dumps(return_5))())
         self.assertEqual(recursion(1), xml_ser.loads(xml_ser.dumps(recursion))(1))
         self.assertEqual(square(1), xml_ser.loads(xml_ser.dumps(square))(1))
@@ -175,7 +175,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(function_use_global_value(), xml_ser.loads(xml_ser.dumps(function_use_global_value))())
 
     def test_class_xml(self):
-        xml_ser = Serializer().get_serializer("xml")
+        xml_ser = Serializer().create_serializer("xml")
         self.assertEqual(ClassWithValue.a, xml_ser.loads(xml_ser.dumps(ClassWithValue)).a)
         self.assertEqual(ClassWithStaticAndClassMethods.test_static(), xml_ser.loads(
             xml_ser.dumps(ClassWithStaticAndClassMethods)).test_static())

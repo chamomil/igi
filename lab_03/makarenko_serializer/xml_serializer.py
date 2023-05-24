@@ -1,5 +1,5 @@
-from encoder import Encoder
-from help_funcs import count_structs
+from .encoder import Encoder
+from .help_funcs import count_structs
 
 
 class XmlSerializer:

@@ -3,8 +3,9 @@ import builtins
 import inspect
 import types
 
-from lab_03.constants import TYPE, UNNECESSARY_CODE_TYPES, UNNECESSARY_DUNDER, UNNECESSARY_TYPES
-from lab_03.help_funcs import get_class, is_iterable
+from .constants import TYPE, UNNECESSARY_CODE_TYPES, UNNECESSARY_DUNDER, UNNECESSARY_TYPES
+from .help_funcs import get_class, is_iterable
+
 
 
 class Encoder:
@@ -58,7 +59,7 @@ class Encoder:
             elif obj_type == TYPE.FUNCTION:
                 return cls._get_func(obj)
             elif obj_type == TYPE.CELL:
-                return (lambda: cls.decode(obj.get("data"))).__closure__[0]
+                return cls._get_cell(obj.get("data"))
             elif obj_type == TYPE.CODE:
                 return cls._get_code(obj)
             elif obj_type == TYPE.MODULE:
@@ -186,3 +187,9 @@ class Encoder:
             key: cls.decode(value) for key, value in data["attrs"].items()
         }
         return result
+
+    @classmethod
+    def _get_cell(cls, value):
+        decoded = cls.decode(value)
+        return (lambda: decoded).__closure__[0]
+

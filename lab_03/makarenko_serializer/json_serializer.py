@@ -1,5 +1,5 @@
-from encoder import Encoder
-from help_funcs import count_braces
+from .encoder import Encoder
+from .help_funcs import count_braces
 
 
 class JsonSerializer:

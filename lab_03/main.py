@@ -1,54 +1,38 @@
-import types
-from serializer import Serializer
+
+from makarenko_serializer.encoder import Encoder
+
+def ed(obj):
+    return Encoder.decode(Encoder.encode(obj))
+
+def top_level():
+    a = 10
+
+    def closure():
+        nonlocal a
+        a += 1
+        return a
+
+    return closure
+
+def double_result(func):
+    def wrapper(*args, **kwargs):
+        value = func(*args, **kwargs)
+        return value * 2
+
+    return wrapper
 
 
-def function(string=(12, 11)):
-
-    def text(num=12):
-        print(string)
-        print(num)
-
-        def text2(num=12):
-            print(string)
-            print(num)
-        return text2
-    return text
-
-
-class ClassA:
-    def __init__(self):
-        super().__init__()
-        self.a = 1
-
-    def method_a(self):
-        return self.a
-
-
-class ClassB:
-    def __init__(self):
-        super().__init__()
-        self.b = 2
-
-    def method_b(self):
-        return self.b
-
-
-class ClassC(ClassB, ClassA):
-    def __init__(self):
-        super().__init__()
+@double_result
+def doubled():
+    return 5
 
 
 def main():
-    xml_ser = Serializer().get_serializer("xml")
-    val = ClassC
-    # txt = function()()
-    # print(txt.__qualname__)
-    # print(type(txt.__code__))
-    b = xml_ser.dumps(val)
-    print(b)
-    d = xml_ser.loads(b)
-    print(d().method_a())
+    enc = Encoder.encode(top_level())
+    print(enc)
+    dec = Encoder.decode(enc)
+    print(dec.__closure__[0].cell_contents)
+    dec()
+    print(dec)
 
-
-if __name__ == '__main__':
-    main()
+main()

@@ -1,10 +1,10 @@
-from json_serializer import JsonSerializer
-from xml_serializer import XmlSerializer
+from .json_serializer import JsonSerializer
+from .xml_serializer import XmlSerializer
 
 
 class Serializer:
     @staticmethod
-    def get_serializer(answer):
+    def create_serializer(answer):
         if answer == "json":
             return JsonSerializer()
         elif answer == "xml":
