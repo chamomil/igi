@@ -1,9 +1,6 @@
 
 from makarenko_serializer.serializer import Serializer
 
-def ed(obj):
-    return Encoder.decode(Encoder.encode(obj))
-
 def top_level():
     a = 10
 

@@ -7,6 +7,7 @@ setup(
     license='MIT',
     description='json/xml serializer',
     entry_points={
+
         "console_scripts": [
             "makarenko_serializer = makarenko_serializer.makarenko_serializer:main"
         ]
