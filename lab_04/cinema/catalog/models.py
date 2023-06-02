@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -13,6 +15,11 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+    def display_genre(self):
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+
+    display_genre.short_description = 'Genre'
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=200, help_text="enter genre")
@@ -26,3 +33,15 @@ class Country(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MovieSession(models.Model):
+    lounge_number = models.IntegerField(null=True)
+    movie = models.ForeignKey('Movie', on_delete=models.SET_NULL, null=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text="id for session")
+    date = models.DateField(null=True)
+    time_begin = models.TimeField(null=True)
+    time_end = models.TimeField(null=True)
+
+    def __str__(self):
+        return '%s (%s)' % (self.id, self.movie.title)
