@@ -1,10 +1,7 @@
-<html lang="html">
-    <head>
-        <title>catalog</title>
-    </head>
-    <body marginheight="30" marginwidth="30">
-        <h1>Movies</h1>
-        {% if movies_list %}
+{%  extends 'main/base.html' %}
+{% block title %}Home Page{% endblock %}
+{% block content %}
+    {% if movies_list %}
             <ul>
             {% for movie in movies_list %}
                 <li><a href="{% url 'catalog:detail' movie.id %}">{{ movie.title }}</a></li>
@@ -13,5 +10,4 @@
         {% else %}
             <p>No movies are available.</p>
         {% endif %}
-    </body>
-</html>
+{% endblock %}
