@@ -1,0 +1,11 @@
+{%  extends 'main/base.html' %}
+{% block title %}Purchase confirmation{% endblock %}
+{% block content %}
+    <p></p>
+    <form action="{% url 'catalog:confirm_handler' %}" method="post">
+        {% csrf_token %}
+        <input id="id_payment_id" name="payment_id" type="number" value="{{ payment.id }}" hidden="hidden"/>
+        <input type="submit" class="btn btn-primary btn-lg" value="Confirm"/>
+        <input type="submit" class="btn btn-primary btn-lg" value="Cancel" name="cancel"/>
+    </form>
+{% endblock %}

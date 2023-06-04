@@ -8,7 +8,7 @@ class Movie(models.Model):
     duration = models.DurationField()
     genre = models.ManyToManyField('Genre', help_text="choose genre")
     budget = models.CharField(max_length=200)
-    poster = models.ImageField(upload_to='catalog/static/catalog/posters/')
+    poster = models.ImageField(upload_to='static/catalog/posters/')
     description = models.TextField()
     rating = models.FloatField()
     year_of_production = models.CharField(max_length=4)
@@ -45,3 +45,23 @@ class Lounge(models.Model):
 
     def __str__(self):
         return self.number.__str__()
+
+
+class Payment(models.Model):
+    userId = models.IntegerField()
+    movie_session = models.ForeignKey('MovieSession', on_delete=models.CASCADE)
+    PAY_STATUS = (
+        ('p', 'Pending'),
+        ('s', 'Success'),
+        ('d', 'Declined'),
+    )
+
+    status = models.CharField(
+        max_length=1,
+        choices=PAY_STATUS,
+        blank=True,
+        default='p',
+    )
+
+    def __str__(self):
+        return self.status

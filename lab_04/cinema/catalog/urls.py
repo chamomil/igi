@@ -9,8 +9,10 @@ app_name = "catalog"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
     path("<int:pk>/", views.DetailView.as_view(), name="detail"),
-    path("<int:pk>/ticket/", views.BuyTicket.as_view, name="ticket"),
-    path("sign-up/", views.sign_up, name="sign_up")
+    path("sign-up/", views.sign_up, name="sign_up"),
+    path("reserve-ticket", views.ReserveTicket.as_view(), name="reserve_ticket"),
+    path("confirm_pay/<int:pk>", views.ConfirmReservation.as_view(), name="confirm_pay"),
+    path("confirm_handler", views.ConfirmationHandler.as_view(), name="confirm_handler"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

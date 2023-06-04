@@ -1,12 +1,11 @@
-import logging
-
 from django.views import generic
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 
-from .models import Movie, MovieSession
-from .forms import RegisterForm, BuyTicketForm
+from .models import Movie, Payment, MovieSession
+from .forms import RegisterForm, ReserveTicketForm, ConfirmTicketForm
 
 
 class IndexView(generic.ListView):
@@ -22,6 +21,9 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
     template_name = "catalog/detail.html"
     login_url = "/login/"
 
+    def post(self, session):
+        return Payment(userId=self.request.user.id, movie_session=session).id
+
 
 def sign_up(request):
     if request.method == 'POST':
@@ -36,6 +38,32 @@ def sign_up(request):
     return render(request, 'registration/sign_up.html', {'form': form})
 
 
-class BuyTicket(generic.FormView):
-    template_name = 'catalog/buy_ticket.html'
-    form_class = BuyTicketForm
+class ReserveTicket(generic.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        form = ReserveTicketForm(self.request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            session = get_object_or_404(MovieSession, pk=form_data.get('session_id'))
+
+            new_payment = Payment(userId=self.request.user.id, movie_session=session)
+            new_payment.save()
+            return f'/catalog/confirm_pay/{new_payment.id}'
+
+
+class ConfirmReservation(generic.DetailView):
+    model = Payment
+    template_name = 'catalog/confirm_pay.html'
+
+
+class ConfirmationHandler(generic.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        form = ConfirmTicketForm(self.request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            payment = get_object_or_404(Payment, pk=form_data.get('payment_id'))
+            if "cancel" in self.request.POST:
+                payment.status = 'd'
+            else:
+                payment.status = 's'
+            payment.save()
+        return reverse("catalog:index")

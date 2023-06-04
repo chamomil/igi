@@ -3,7 +3,6 @@
 {% block content %}
     <p></p>
     <img src="{{ movie.poster.url }}" alt="poster">
-    <p>{{ movie.poster }}</p>
     <h1>{{ movie.title }}</h1>
     <p>Year: {{ movie.year_of_production }}</p>
     <p>Duration: {{ movie.duration }}</p>
@@ -14,6 +13,9 @@
     <p>{{ movie.description }}</p>
     <p></p>
     <h2>Available Movie Sessions</h2>
+    {% if  movie.moviesession_set.count == 0%}
+        <p>No sessions are available</p>
+    {% endif %}
     {% for session in movie.moviesession_set.all %}
         <hr/>
         {% if session.is_valid %}
@@ -21,8 +23,10 @@
             <p>Lounge {{ session.lounge }}</p>
             <p>Time the movie starts: {{ session.time_begin }}</p>
             <p>Price {{ session.price_per_ticket }}</p>
-            <form action="/catalog/{{ movie.id }}/ticket/" method="post">
-                <input type="submit" value="Buy a ticket">
+            <form action="{% url 'catalog:reserve_ticket' %}" method="post">
+                {% csrf_token %}
+                <input id="id_session_id" name="session_id" type="number" value="{{ session.id }}" hidden="hidden"/>
+                <button type="submit" class="btn btn-primary btn-lg">Buy ticket</button>
             </form>
         {% endif %}
     {% endfor %}

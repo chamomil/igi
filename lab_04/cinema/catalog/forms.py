@@ -11,5 +11,9 @@ class RegisterForm(UserCreationForm):
         fields = ["username", "email", "password1", "password2"]
 
 
-class BuyTicketForm(forms.Form):
-    amount = forms.IntegerField(min_value=1, help_text="Enter ")
+class ReserveTicketForm(forms.Form):
+    session_id = forms.IntegerField(min_value=1)
+
+
+class ConfirmTicketForm(forms.Form):
+    payment_id = forms.IntegerField(min_value=1)
