@@ -13,6 +13,7 @@ urlpatterns = [
     path("reserve-ticket", views.ReserveTicket.as_view(), name="reserve_ticket"),
     path("confirm_pay/<int:pk>", views.ConfirmReservation.as_view(), name="confirm_pay"),
     path("confirm_handler", views.ConfirmationHandler.as_view(), name="confirm_handler"),
+    path("my_tickets", views.MyTickets.as_view(), name="my_tickets"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

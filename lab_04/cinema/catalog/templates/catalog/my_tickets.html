@@ -1,0 +1,17 @@
+{%  extends 'main/base.html' %}
+{% block title %}Home Page{% endblock %}
+{% block content %}
+    <p></p>
+    <h1>My tickets</h1>
+    <p></p>
+    {% if tickets_list %}
+        {% for ticket in tickets_list %}
+            <hr/>
+            <p>{{ ticket.movie_session.movie.title }}</p>
+            <p>Lounge {{ ticket.movie_session.lounge.number }},  Date: {{ ticket.movie_session.date }}</p>
+            <p>Price: {{ ticket.movie_session.price_per_ticket }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No tickets reserved yet.</p>
+    {% endif %}
+{% endblock %}

@@ -67,3 +67,11 @@ class ConfirmationHandler(generic.RedirectView):
                 payment.status = 's'
             payment.save()
         return reverse("catalog:index")
+
+
+class MyTickets(generic.ListView):
+    template_name = 'catalog/my_tickets.html'
+    context_object_name = "tickets_list"
+
+    def get_queryset(self):
+        return Payment.objects.filter(userId__exact=self.request.user.id, status__exact='s').all()
