@@ -9,9 +9,17 @@ class MovieSessionInLine(admin.TabularInline):
 
 
 class MovieAdmin(admin.ModelAdmin):
-    fields = ["title", "year_of_production", "genre", "country",
-              "duration", "budget", "rating", "description",
-              "poster"]
+    fields = [
+        "title",
+        "year_of_production",
+        "genre",
+        "country",
+        "duration",
+        "budget",
+        "rating",
+        "description",
+        "poster",
+    ]
     inlines = [MovieSessionInLine]
     list_display = ["title", "year_of_production"]
     list_filter = ["year_of_production"]

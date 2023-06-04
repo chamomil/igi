@@ -10,8 +10,14 @@
             <p>{{ ticket.movie_session.movie.title }}</p>
             <p>Lounge {{ ticket.movie_session.lounge.number }},  Date: {{ ticket.movie_session.date }}</p>
             <p>Price: {{ ticket.movie_session.price_per_ticket }}</p>
+            <p></p>
+            <form action="{% url 'catalog:my_tickets_delete' ticket.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete ticket</button>
+            </form>
         {% endfor %}
     {% else %}
         <p>No tickets reserved yet.</p>
     {% endif %}
+    <p></p>
 {% endblock %}

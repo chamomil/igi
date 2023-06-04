@@ -5,19 +5,40 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('catalog', '0007_alter_movie_poster'),
+        ("catalog", "0007_alter_movie_poster"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('userId', models.IntegerField()),
-                ('status', models.CharField(blank=True, choices=[('p', 'Pending'), ('s', 'Success'), ('d', 'Declined')], default='p', max_length=1)),
-                ('movie_session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalog.moviesession')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("userId", models.IntegerField()),
+                (
+                    "status",
+                    models.CharField(
+                        blank=True,
+                        choices=[("p", "Pending"), ("s", "Success"), ("d", "Declined")],
+                        default="p",
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "movie_session",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="catalog.moviesession",
+                    ),
+                ),
             ],
         ),
     ]

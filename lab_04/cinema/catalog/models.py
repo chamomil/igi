@@ -6,9 +6,9 @@ class Movie(models.Model):
     title = models.CharField(max_length=200)
     country = models.CharField(max_length=200)
     duration = models.DurationField()
-    genre = models.ManyToManyField('Genre', help_text="choose genre")
+    genre = models.ManyToManyField("Genre", help_text="choose genre")
     budget = models.CharField(max_length=200)
-    poster = models.ImageField(upload_to='static/catalog/posters/')
+    poster = models.ImageField(upload_to="static/catalog/posters/")
     description = models.TextField()
     rating = models.FloatField()
     year_of_production = models.CharField(max_length=4)
@@ -18,15 +18,18 @@ class Movie(models.Model):
 
 
 class MovieSession(models.Model):
-    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    movie = models.ForeignKey("Movie", on_delete=models.CASCADE)
     date = models.DateField()
     time_begin = models.TimeField()
-    lounge = models.ForeignKey('Lounge', on_delete=models.CASCADE)
+    lounge = models.ForeignKey("Lounge", on_delete=models.CASCADE)
     bought_tickets = 0
     price_per_ticket = models.FloatField(default=10.0)
 
     def is_valid(self):
-        return self.date >= timezone.now().date() and self.bought_tickets < self.lounge.capacity
+        return (
+            self.date >= timezone.now().date()
+            and self.bought_tickets < self.lounge.capacity
+        )
 
     def __str__(self):
         return self.movie.title
@@ -49,18 +52,18 @@ class Lounge(models.Model):
 
 class Payment(models.Model):
     userId = models.IntegerField()
-    movie_session = models.ForeignKey('MovieSession', on_delete=models.CASCADE)
+    movie_session = models.ForeignKey("MovieSession", on_delete=models.CASCADE)
     PAY_STATUS = (
-        ('p', 'Pending'),
-        ('s', 'Success'),
-        ('d', 'Declined'),
+        ("p", "Pending"),
+        ("s", "Success"),
+        ("d", "Declined"),
     )
 
     status = models.CharField(
         max_length=1,
         choices=PAY_STATUS,
         blank=True,
-        default='p',
+        default="p",
     )
 
     def __str__(self):

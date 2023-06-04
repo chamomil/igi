@@ -13,7 +13,23 @@ class IndexView(generic.ListView):
     context_object_name = "movies_list"
 
     def get_queryset(self):
-        return Movie.objects.order_by("-year_of_production")[:5]
+        query = Movie.objects.get_queryset()
+        search = self.request.GET.get("search")
+        genre = self.request.GET.get("genre")
+
+        if search:
+            query = query.filter(title__icontains=search)
+
+        if genre:
+            query = query.filter(genre__name__icontains=genre)
+
+        return query.order_by("-year_of_production")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search"] = self.request.GET.get("search")
+        context["genre"] = self.request.GET.get("genre")
+        return context
 
 
 class DetailView(LoginRequiredMixin, generic.DetailView):
@@ -21,21 +37,18 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
     template_name = "catalog/detail.html"
     login_url = "/login/"
 
-    def post(self, session):
-        return Payment(userId=self.request.user.id, movie_session=session).id
-
 
 def sign_up(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('/catalog')
+            return redirect("/catalog")
     else:
         form = RegisterForm()
 
-    return render(request, 'registration/sign_up.html', {'form': form})
+    return render(request, "registration/sign_up.html", {"form": form})
 
 
 class ReserveTicket(generic.RedirectView):
@@ -43,16 +56,16 @@ class ReserveTicket(generic.RedirectView):
         form = ReserveTicketForm(self.request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-            session = get_object_or_404(MovieSession, pk=form_data.get('session_id'))
+            session = get_object_or_404(MovieSession, pk=form_data.get("session_id"))
 
             new_payment = Payment(userId=self.request.user.id, movie_session=session)
             new_payment.save()
-            return f'/catalog/confirm_pay/{new_payment.id}'
+            return f"/catalog/confirm_pay/{new_payment.id}"
 
 
 class ConfirmReservation(generic.DetailView):
     model = Payment
-    template_name = 'catalog/confirm_pay.html'
+    template_name = "catalog/confirm_pay.html"
 
 
 class ConfirmationHandler(generic.RedirectView):
@@ -60,18 +73,31 @@ class ConfirmationHandler(generic.RedirectView):
         form = ConfirmTicketForm(self.request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-            payment = get_object_or_404(Payment, pk=form_data.get('payment_id'))
+            payment = get_object_or_404(Payment, pk=form_data.get("payment_id"))
             if "cancel" in self.request.POST:
-                payment.status = 'd'
+                payment.status = "d"
             else:
-                payment.status = 's'
+                payment.status = "s"
             payment.save()
         return reverse("catalog:index")
 
 
-class MyTickets(generic.ListView):
-    template_name = 'catalog/my_tickets.html'
+class MyTickets(LoginRequiredMixin, generic.ListView):
+    template_name = "catalog/my_tickets.html"
     context_object_name = "tickets_list"
+    login_url = "/login/"
 
     def get_queryset(self):
-        return Payment.objects.filter(userId__exact=self.request.user.id, status__exact='s').all()
+        return Payment.objects.filter(
+            userId__exact=self.request.user.id, status__exact="s"
+        ).all()
+
+
+class DeleteTicketView(generic.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk is not None:
+            payment = Payment.objects.get(pk=pk)
+            payment.delete()
+
+        return reverse("catalog:my_tickets")

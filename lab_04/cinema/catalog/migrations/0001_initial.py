@@ -5,52 +5,97 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Genre',
+            name="Genre",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='Lounge',
+            name="Lounge",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number', models.IntegerField()),
-                ('capacity', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("number", models.IntegerField()),
+                ("capacity", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='Movie',
+            name="Movie",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('country', models.CharField(max_length=200)),
-                ('duration', models.DurationField()),
-                ('budget', models.IntegerField()),
-                ('poster', models.ImageField(upload_to='')),
-                ('description', models.TextField()),
-                ('rating', models.FloatField()),
-                ('year_of_production', models.DateField()),
-                ('genre', models.ManyToManyField(help_text='choose genre', to='catalog.genre')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("country", models.CharField(max_length=200)),
+                ("duration", models.DurationField()),
+                ("budget", models.IntegerField()),
+                ("poster", models.ImageField(upload_to="")),
+                ("description", models.TextField()),
+                ("rating", models.FloatField()),
+                ("year_of_production", models.DateField()),
+                (
+                    "genre",
+                    models.ManyToManyField(
+                        help_text="choose genre", to="catalog.genre"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='MovieSession',
+            name="MovieSession",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField()),
-                ('time_begin', models.TimeField()),
-                ('price_per_ticket', models.FloatField(default=10.0)),
-                ('lounge', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalog.lounge')),
-                ('movie', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalog.movie')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField()),
+                ("time_begin", models.TimeField()),
+                ("price_per_ticket", models.FloatField(default=10.0)),
+                (
+                    "lounge",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="catalog.lounge"
+                    ),
+                ),
+                (
+                    "movie",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="catalog.movie"
+                    ),
+                ),
             ],
         ),
     ]

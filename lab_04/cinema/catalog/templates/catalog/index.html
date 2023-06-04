@@ -1,17 +1,24 @@
-{%  extends 'main/base.html' %}
+{% extends 'main/base.html' %}
 {% block title %}Home Page{% endblock %}
 {% block content %}
-    <p></p>
-
+    <br>
     <h1>Movies</h1>
-    <p></p>
+    <form action="{% url 'catalog:index' %}" method="get">
+        <input name="search" type="text" placeholder="Search..." {% if search %} value="{{ search }}{% endif %}">
+        <input name="genre" type="text" placeholder="Search by genre..." {% if genre %} value="{{ genre }}"{% endif %}>
+        <button type="submit">Search</button>
+    </form>
+    <br>
     {% if movies_list %}
-            <ul>
-            {% for movie in movies_list %}
-                <li><a href="{% url 'catalog:detail' movie.id %}">{{ movie.title }}</a></li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>No movies are available.</p>
-        {% endif %}
+
+        {% for movie in movies_list %}
+            {% if movie.moviesession_set.count != 0 %}
+                <p><a href="{% url 'catalog:detail' movie.id %}">{{ movie.title }}</a></p>
+                <p>Genre: {% for ganr in  movie.genre.all %}{{ ganr }}, {% endfor %}</p>
+                <hr/>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>No movies are available.</p>
+    {% endif %}
 {% endblock %}

@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('catalog', '0003_alter_movie_poster'),
+        ("catalog", "0003_alter_movie_poster"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='movie',
-            name='budget',
+            model_name="movie",
+            name="budget",
             field=models.CharField(max_length=200),
         ),
         migrations.AlterField(
-            model_name='movie',
-            name='year_of_production',
+            model_name="movie",
+            name="year_of_production",
             field=models.CharField(max_length=4),
         ),
     ]
