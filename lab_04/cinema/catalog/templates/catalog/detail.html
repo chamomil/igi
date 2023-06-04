@@ -1,7 +1,9 @@
 {%  extends 'main/base.html' %}
 {% block title %}Home Page{% endblock %}
 {% block content %}
+    <p></p>
     <img src="{{ movie.poster.url }}" alt="poster">
+    <p></p>
     <h1>{{ movie.title }}</h1>
     <p>Year: {{ movie.year_of_production }}</p>
     <p>Duration: {{ movie.duration }}</p>
@@ -10,4 +12,17 @@
     <p>Budget: {{ movie.budget }}</p>
     <p>Genre: {% for ganr in  movie.genre.all %}{{ ganr }}, {% endfor %}</p>
     <p>{{ movie.description }}</p>
+    <p></p>
+    <h2>Available Movie Sessions</h2>
+    {% for session in movie.moviesession_set.all %}
+        <hr/>
+        {% if session.is_valid %}
+            <p>{{ session.date }}</p>
+            <p>Lounge {{ session.lounge }}</p>
+            <p>Time the movie starts: {{ session.time_begin }}</p>
+            <p>Price {{ session.price_per_ticket }}</p>
+            <button>Buy a ticket</button>
+        {% endif %}
+    {% endfor %}
+    <p></p>
 {% endblock %}
