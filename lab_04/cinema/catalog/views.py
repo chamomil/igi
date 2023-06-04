@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Movie
-from .forms import RegisterForm
+from .models import Movie, MovieSession
+from .forms import RegisterForm, BuyTicketForm
 
 
 class IndexView(generic.ListView):
@@ -34,3 +34,8 @@ def sign_up(request):
         form = RegisterForm()
 
     return render(request, 'registration/sign_up.html', {'form': form})
+
+
+class BuyTicket(generic.FormView):
+    template_name = 'catalog/buy_ticket.html'
+    form_class = BuyTicketForm

@@ -3,7 +3,7 @@
 {% block content %}
     <p></p>
     <img src="{{ movie.poster.url }}" alt="poster">
-    <p></p>
+    <p>{{ movie.poster }}</p>
     <h1>{{ movie.title }}</h1>
     <p>Year: {{ movie.year_of_production }}</p>
     <p>Duration: {{ movie.duration }}</p>
@@ -21,7 +21,9 @@
             <p>Lounge {{ session.lounge }}</p>
             <p>Time the movie starts: {{ session.time_begin }}</p>
             <p>Price {{ session.price_per_ticket }}</p>
-            <button>Buy a ticket</button>
+            <form action="/catalog/{{ movie.id }}/ticket/" method="post">
+                <input type="submit" value="Buy a ticket">
+            </form>
         {% endif %}
     {% endfor %}
     <p></p>
