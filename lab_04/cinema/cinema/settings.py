@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_tools_stats",
+    "django_nvd3",
     "catalog.apps.CatalogConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -132,3 +134,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "/catalog"
 LOGOUT_REDIRECT_URL = "/catalog"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/var/tmp/django_cache",
+    }
+}

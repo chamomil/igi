@@ -22,4 +22,5 @@ urlpatterns = [
     path("sign-up/", include("catalog.urls")),
     path("admin/", admin.site.urls),
     path("", include("django.contrib.auth.urls")),
+    path("admin_tools_stats/", include("admin_tools_stats.urls")),
 ]

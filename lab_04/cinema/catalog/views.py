@@ -1,11 +1,12 @@
-from django.views import generic
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.views import generic
 
-from .models import Movie, Payment, MovieSession
 from .forms import RegisterForm, ReserveTicketForm, ConfirmTicketForm
+from .models import Movie, Payment, MovieSession
+from .services import get_random_dog, get_random_joke
 
 
 class IndexView(generic.ListView):
@@ -29,6 +30,8 @@ class IndexView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["search"] = self.request.GET.get("search")
         context["genre"] = self.request.GET.get("genre")
+        context["random_dog"] = get_random_dog()
+        context["random_joke"] = get_random_joke()
         return context
 
 
