@@ -22,13 +22,12 @@ class MovieSession(models.Model):
     date = models.DateField()
     time_begin = models.TimeField()
     lounge = models.ForeignKey("Lounge", on_delete=models.CASCADE)
-    bought_tickets = 0
     price_per_ticket = models.FloatField(default=10.0)
 
     def is_valid(self):
         return (
             self.date >= timezone.now().date()
-            and self.bought_tickets < self.lounge.capacity
+            and self.payment_set.count() < self.lounge.capacity
         )
 
     def __str__(self):

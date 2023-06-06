@@ -18,8 +18,8 @@
         <p>No sessions are available</p>
     {% endif %}
     {% for session in movie.moviesession_set.all %}
-        <hr/>
         {% if session.is_valid %}
+            <hr/>
             <p>{{ session.date }}</p>
             <p>Lounge {{ session.lounge }}</p>
             <p>Time the movie starts: {{ session.time_begin }}</p>
